@@ -174,7 +174,7 @@ public class ConversationService {
      * @param request         流式聊天请求
      * @param responseHandler 响应处理回调
      */
-    public void chatStream(StreamChatRequest request, BiConsumer<StreamChatResponse, Boolean> responseHandler) {
+    public void kchatStream(StreamChatRequest request, BiConsumer<StreamChatResponse, Boolean> responseHandler) {
         logger.info("接收到真实流式聊天请求: {}", request.getMessage());
 
         LlmService llmService = getLlmService(request.getProvider());
