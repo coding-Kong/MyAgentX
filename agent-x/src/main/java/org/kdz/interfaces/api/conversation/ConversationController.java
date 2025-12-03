@@ -5,7 +5,7 @@ import jakarta.annotation.Resource;
 import org.kdz.application.conversation.dto.ChatRequest;
 import org.kdz.application.conversation.dto.ChatResponse;
 import org.kdz.application.conversation.dto.StreamChatRequest;
-import org.kdz.application.conversation.service.ConversationService;
+import org.kdz.application.conversation.service.ConversationAppService;
 import org.kdz.interfaces.api.common.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class ConversationController {
     private final Logger logger = LoggerFactory.getLogger(ConversationController.class);
 
     @Resource
-    private ConversationService conversationService;
+    private ConversationAppService conversationAppService;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -50,7 +50,7 @@ public class ConversationController {
         }
 
         try {
-            ChatResponse response = conversationService.chat(request);
+            ChatResponse response = conversationAppService.chat(request);
             return Result.success(response);
         } catch (Exception e) {
             logger.error("处理聊天请求异常", e);
@@ -99,7 +99,7 @@ public class ConversationController {
         executorService.execute(() -> {
             try {
                 // 使用新的真正流式实现
-                conversationService.chatStream(request, (response, isLast) -> {
+                conversationAppService.chatStream(request, (response, isLast) -> {
                     try {
                         // 发送每个响应块到客户端
                         emitter.send(response);
