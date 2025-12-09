@@ -1,5 +1,7 @@
 package org.kdz.domain.conversation.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.kdz.domain.common.exception.EntityNotFoundException;
 import org.kdz.domain.conversation.model.Session;
 import org.kdz.domain.conversation.model.SessionDTO;
@@ -54,7 +56,11 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public List<SessionDTO> getUserSessions(String userId) {
-        return sessionRepository.findByUserIdOrderByUpdatedAtDesc(userId)
+        LambdaQueryWrapper<Session> queryWrapper = Wrappers.<Session>lambdaQuery()
+                .eq(Session::getUserId, userId)
+                .orderByDesc(Session::getUpdatedAt);
+
+        return sessionRepository.selectList(queryWrapper)
                 .stream()
                 .map(Session::toDTO)
                 .collect(Collectors.toList());
@@ -62,7 +68,12 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public List<SessionDTO> getUserActiveSessions(String userId) {
-        return sessionRepository.findByUserIdAndIsArchivedOrderByUpdatedAtDesc(userId, false)
+        LambdaQueryWrapper<Session> queryWrapper = Wrappers.<Session>lambdaQuery()
+                .eq(Session::getUserId, userId)
+                .eq(Session::isArchived, false)
+                .orderByDesc(Session::getUpdatedAt);
+
+        return sessionRepository.selectList(queryWrapper)
                 .stream()
                 .map(Session::toDTO)
                 .collect(Collectors.toList());
@@ -70,7 +81,12 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public List<SessionDTO> getUserArchivedSessions(String userId) {
-        return sessionRepository.findByUserIdAndIsArchivedOrderByUpdatedAtDesc(userId, true)
+        LambdaQueryWrapper<Session> queryWrapper = Wrappers.<Session>lambdaQuery()
+                .eq(Session::getUserId, userId)
+                .eq(Session::isArchived, true)
+                .orderByDesc(Session::getUpdatedAt);
+
+        return sessionRepository.selectList(queryWrapper)
                 .stream()
                 .map(Session::toDTO)
                 .collect(Collectors.toList());
@@ -133,7 +149,12 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public List<SessionDTO> searchSessions(String userId, String keyword) {
-        return sessionRepository.findByUserIdAndTitleContainingOrderByUpdatedAtDesc(userId, keyword)
+        LambdaQueryWrapper<Session> queryWrapper = Wrappers.<Session>lambdaQuery()
+                .eq(Session::getUserId, userId)
+                .like(Session::getTitle, keyword)
+                .orderByDesc(Session::getUpdatedAt);
+
+        return sessionRepository.selectList(queryWrapper)
                 .stream()
                 .map(Session::toDTO)
                 .collect(Collectors.toList());

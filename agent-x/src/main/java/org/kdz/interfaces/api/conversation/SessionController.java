@@ -7,6 +7,7 @@ import org.kdz.application.conversation.service.SessionAppService;
 import org.kdz.domain.conversation.model.MessageDTO;
 import org.kdz.domain.conversation.model.SessionDTO;
 import org.kdz.interfaces.api.common.Result;
+import org.kdz.interfaces.dto.conversation.CreateSessionRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -39,10 +40,11 @@ public class SessionController {
      * 创建新会话
      */
     @PostMapping("/session")
-    public Result<SessionDTO> createSession(@RequestParam String title,
-                                            @RequestParam String userId,
-                                            @RequestParam(required = false) String description) {
-        SessionDTO session = sessionAppService.createSession(title, userId, description);
+    public Result<SessionDTO> createSession(@RequestBody CreateSessionRequest request) {
+        SessionDTO session = sessionAppService.createSession(
+                request.getTitle(),
+                request.getUserId(),
+                request.getDescription());
         return Result.success(session);
     }
 
